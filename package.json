@@ -1,0 +1,35 @@
+{
+  "name": "auth-lab",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.32.1",
+  "scripts": {
+    "dev": "nuxt dev --port 3390 --host 127.0.0.1",
+    "dev:api": "mkdir -p .output/public && wrangler dev --port 8890 --ip 127.0.0.1 --env dev",
+    "build": "nuxt generate",
+    "deploy": "pnpm run db:migrate && wrangler deploy",
+    "typecheck": "nuxt typecheck && tsc -p worker",
+    "types": "wrangler types worker/worker-configuration.d.ts",
+    "auth:schema": "node scripts/auth-schema.ts",
+    "db:migrate": "wrangler d1 migrations apply auth-lab --remote",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local --env dev",
+    "test:flows": "node scripts/flows.ts"
+  },
+  "dependencies": {
+    "@better-auth/api-key": "1.7.18",
+    "@better-auth/passkey": "1.7.18",
+    "@iconify-json/lucide": "1.2.145",
+    "@nuxt/ui": "4.12.0",
+    "better-auth": "1.7.18",
+    "nuxt": "4.6.2",
+    "tailwindcss": "4.3.3",
+    "uqr": "0.1.3"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1",
+    "typescript": "5.9.3",
+    "vue-tsc": "3.3.13",
+    "wrangler": "4.151.1"
+  }
+}

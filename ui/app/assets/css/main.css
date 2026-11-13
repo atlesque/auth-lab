@@ -1,0 +1,330 @@
+/* Auth Lab's playful theme on Nuxt UI: round fonts, candy colors, and a "sticker" look (thick outline, hard shadow).
+   Colors are defined here instead of by Nuxt UI's runtime plugin, which would inject an inline <style> the CSP blocks. */
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@source "../../components";
+@source "../../app.config.ts";
+@source "../../../../app";
+
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 1000;
+  src: url("/fonts/nunito-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 1000;
+  src: url("/fonts/nunito-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Fredoka";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url("/fonts/fredoka-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Fredoka";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url("/fonts/fredoka-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@theme static {
+  --font-sans: "Nunito", ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Fredoka", ui-rounded, "SF Pro Rounded", "Nunito", system-ui, sans-serif;
+  /* The outline and hard-shadow color; it changes with light and dark (see --ink below). */
+  --color-ink: var(--ink);
+  /* Text on a candy background: the same dark in light and dark mode, because candy stays light. */
+  --color-night: #241a47;
+  /* Candy: soft fills for tiles, notes and badges. */
+  --color-candy-pink: #ffa3d1;
+  --color-candy-orange: #ffbd80;
+  --color-candy-yellow: #ffe066;
+  --color-candy-mint: #8fe8bf;
+  --color-candy-sky: #93d5ff;
+  --color-candy-lilac: #c8b6ff;
+  /* Bright: stronger versions for letters and confetti. */
+  --color-bright-pink: #ff4f9a;
+  --color-bright-orange: #ff8a3d;
+  --color-bright-yellow: #f2b600;
+  --color-bright-green: #22b573;
+  --color-bright-blue: #2f9bff;
+  --color-bright-purple: #8b5cf6;
+
+  --animate-bob: bob 4s ease-in-out infinite;
+  --animate-wiggle: wiggle 0.5s ease-in-out;
+  --animate-wave: wave 1.8s ease-in-out infinite;
+  --animate-pop-in: pop-in 0.35s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+  50% { transform: translateY(-9px) rotate(calc(var(--tilt, 0deg) + 5deg)); }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-9deg); }
+  75% { transform: rotate(9deg); }
+}
+@keyframes wave {
+  0%, 60%, 100% { transform: rotate(0deg); }
+  10%, 30% { transform: rotate(16deg); }
+  20%, 40% { transform: rotate(-8deg); }
+}
+@keyframes pop-in {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes confetti-fall {
+  0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translate3d(var(--drift), 112vh, 0) rotate(var(--spin)); opacity: 0; }
+}
+
+/* The sticker look: a thick outline with a hard shadow underneath. */
+@utility pop {
+  border: 2px solid var(--ink);
+  box-shadow: 0 4px 0 0 var(--ink);
+}
+@utility pop-sm {
+  border: 2px solid var(--ink);
+  box-shadow: 0 2px 0 0 var(--ink);
+}
+@utility pop-lg {
+  border: 2px solid var(--ink);
+  box-shadow: 0 6px 0 0 var(--ink);
+}
+
+@layer theme {
+  :root, :host {
+    /* Nuxt UI multiplies every rounded-* class by this (md = 1.5x, lg = 2x, xl = 3x, 2xl = 4x). Keep it small:
+       a corner should stay well inside the padding of what it wraps. */
+    --ui-radius: 0.375rem;
+    /* Neutral: a purple-tinted ink. */
+    --ui-color-neutral-50: #faf7ff;
+    --ui-color-neutral-100: #f3eeff;
+    --ui-color-neutral-200: #e6defa;
+    --ui-color-neutral-300: #cfc4ee;
+    --ui-color-neutral-400: #a79bcf;
+    --ui-color-neutral-500: #7d70a8;
+    --ui-color-neutral-600: #5f5389;
+    --ui-color-neutral-700: #463b6e;
+    --ui-color-neutral-800: #30266a;
+    --ui-color-neutral-900: #251c52;
+    --ui-color-neutral-950: #15102f;
+    /* Primary: grape. */
+    --ui-color-primary-50: #f3efff;
+    --ui-color-primary-100: #e6deff;
+    --ui-color-primary-200: #cfc0ff;
+    --ui-color-primary-300: #b09aff;
+    --ui-color-primary-400: #8f6bff;
+    --ui-color-primary-500: #7747ff;
+    --ui-color-primary-600: #6a35ff;
+    --ui-color-primary-700: #5621e0;
+    --ui-color-primary-800: #451bb3;
+    --ui-color-primary-900: #38188c;
+    --ui-color-primary-950: #220d57;
+    /* Secondary: bubblegum. */
+    --ui-color-secondary-50: #fff0f7;
+    --ui-color-secondary-100: #ffe0ef;
+    --ui-color-secondary-200: #ffc2e0;
+    --ui-color-secondary-300: #ffa3d1;
+    --ui-color-secondary-400: #ff73b3;
+    --ui-color-secondary-500: #ff4f9a;
+    --ui-color-secondary-600: #ec2f82;
+    --ui-color-secondary-700: #d81b74;
+    --ui-color-secondary-800: #a8145a;
+    --ui-color-secondary-900: #84124a;
+    --ui-color-secondary-950: #4d0528;
+    --ui-color-success-50: oklch(98.2% 0.018 155.826);
+    --ui-color-success-100: oklch(96.2% 0.044 156.743);
+    --ui-color-success-200: oklch(92.5% 0.084 155.995);
+    --ui-color-success-300: oklch(87.1% 0.15 154.449);
+    --ui-color-success-400: oklch(79.2% 0.209 151.711);
+    --ui-color-success-500: oklch(72.3% 0.219 149.579);
+    --ui-color-success-600: oklch(62.7% 0.194 149.214);
+    --ui-color-success-700: oklch(52.7% 0.154 150.069);
+    --ui-color-success-800: oklch(44.8% 0.119 151.328);
+    --ui-color-success-900: oklch(39.3% 0.095 152.535);
+    --ui-color-success-950: oklch(26.6% 0.065 152.934);
+    --ui-color-info-50: oklch(97.7% 0.013 236.62);
+    --ui-color-info-100: oklch(95.1% 0.026 236.824);
+    --ui-color-info-200: oklch(90.1% 0.058 230.902);
+    --ui-color-info-300: oklch(82.8% 0.111 230.318);
+    --ui-color-info-400: oklch(74.6% 0.16 232.661);
+    --ui-color-info-500: oklch(68.5% 0.169 237.323);
+    --ui-color-info-600: oklch(58.8% 0.158 241.966);
+    --ui-color-info-700: oklch(50% 0.134 242.749);
+    --ui-color-info-800: oklch(44.3% 0.11 240.79);
+    --ui-color-info-900: oklch(39.1% 0.09 240.876);
+    --ui-color-info-950: oklch(29.3% 0.066 243.157);
+    --ui-color-warning-50: oklch(98.7% 0.022 95.277);
+    --ui-color-warning-100: oklch(96.2% 0.059 95.617);
+    --ui-color-warning-200: oklch(92.4% 0.12 95.746);
+    --ui-color-warning-300: oklch(87.9% 0.169 91.605);
+    --ui-color-warning-400: oklch(82.8% 0.189 84.429);
+    --ui-color-warning-500: oklch(76.9% 0.188 70.08);
+    --ui-color-warning-600: oklch(66.6% 0.179 58.318);
+    --ui-color-warning-700: oklch(55.5% 0.163 48.998);
+    --ui-color-warning-800: oklch(47.3% 0.137 46.201);
+    --ui-color-warning-900: oklch(41.4% 0.112 45.904);
+    --ui-color-warning-950: oklch(27.9% 0.077 45.635);
+    --ui-color-error-50: oklch(97.1% 0.013 17.38);
+    --ui-color-error-100: oklch(93.6% 0.032 17.717);
+    --ui-color-error-200: oklch(88.5% 0.062 18.334);
+    --ui-color-error-300: oklch(80.8% 0.114 19.571);
+    --ui-color-error-400: oklch(70.4% 0.191 22.216);
+    --ui-color-error-500: oklch(63.7% 0.237 25.331);
+    --ui-color-error-600: oklch(57.7% 0.245 27.325);
+    --ui-color-error-700: oklch(50.5% 0.213 27.518);
+    --ui-color-error-800: oklch(44.4% 0.177 26.899);
+    --ui-color-error-900: oklch(39.6% 0.141 25.723);
+    --ui-color-error-950: oklch(25.8% 0.092 26.042);
+  }
+  /* Day. */
+  :root, :host, .light {
+    --ink: #241a47;
+    --ui-primary: #6a35ff;
+    --ui-secondary: #d81b74;
+    --ui-success: #0b8043;
+    --ui-info: #1667d9;
+    --ui-warning: #a35200;
+    --ui-error: #d92d20;
+    --ui-text: #2a1f4e;
+    --ui-text-highlighted: #241a47;
+    --ui-text-toned: #463b6e;
+    --ui-text-muted: #5f5389;
+    --ui-text-dimmed: #7d70a8;
+    --ui-bg: #ffffff;
+    --ui-bg-muted: #fffaf0;
+    --ui-bg-elevated: #f3eeff;
+    --ui-bg-accented: #e6defa;
+    --ui-border: #e6defa;
+    --ui-border-muted: #f0eafc;
+    --ui-border-accented: #cfc4ee;
+    --app-bg: #fff6e3;
+    --app-dots: rgb(36 26 71 / 0.07);
+    --blob-1: rgb(255 163 209 / 0.55);
+    --blob-2: rgb(147 213 255 / 0.6);
+    --blob-3: rgb(255 224 102 / 0.55);
+    --blob-4: rgb(143 232 191 / 0.55);
+  }
+  /* Night. */
+  .dark {
+    --ink: #b6a4ff;
+    --ui-primary: #ffd84d;
+    --ui-secondary: #ff8fc7;
+    --ui-success: #6fe3a8;
+    --ui-info: #93d5ff;
+    --ui-warning: #ffc266;
+    --ui-error: #ff9389;
+    --ui-text: #ece6ff;
+    --ui-text-highlighted: #ffffff;
+    --ui-text-toned: #d5cbf5;
+    --ui-text-muted: #b3a8d9;
+    --ui-text-dimmed: #8f84b8;
+    --ui-text-inverted: #241a47;
+    --ui-bg: #251c52;
+    --ui-bg-muted: #1d1642;
+    --ui-bg-elevated: #30266a;
+    --ui-bg-accented: #3f338a;
+    --ui-border: #3f338a;
+    --ui-border-muted: #2c2360;
+    --ui-border-accented: #5646b0;
+    --app-bg: #15102f;
+    --app-dots: rgb(255 255 255 / 0.16);
+    --blob-1: rgb(255 79 154 / 0.22);
+    --blob-2: rgb(47 155 255 / 0.22);
+    --blob-3: rgb(139 92 246 / 0.3);
+    --blob-4: rgb(34 181 115 / 0.16);
+  }
+}
+
+@layer base {
+  html { background: var(--app-bg); color-scheme: light; }
+  html.dark { color-scheme: dark; }
+  body {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    color: var(--ui-text);
+    -webkit-font-smoothing: antialiased;
+    /* Dots (stars at night) over four soft color blobs. */
+    background:
+      radial-gradient(circle, var(--app-dots) 1.5px, transparent 1.6px) 0 0 / 26px 26px,
+      radial-gradient(38rem 26rem at -8% -6%, var(--blob-1), transparent 62%),
+      radial-gradient(34rem 26rem at 108% 4%, var(--blob-2), transparent 62%),
+      radial-gradient(36rem 26rem at 104% 104%, var(--blob-3), transparent 62%),
+      radial-gradient(34rem 26rem at -6% 100%, var(--blob-4), transparent 62%),
+      var(--app-bg);
+    background-attachment: fixed;
+  }
+  h1, h2, h3 { font-family: var(--font-display); }
+  ::selection { background: var(--color-candy-yellow); color: var(--color-night); }
+}
+
+/* Nuxt UI components carry these marker classes (ui/app/app.config.ts). The rules are outside any layer on purpose:
+   that way they win over the component's own utility classes (rings, radii) without fighting the class merge. */
+.kid-btn {
+  border-radius: 9999px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease, color 0.15s ease;
+}
+.kid-btn:focus-visible { outline: 3px solid var(--ui-primary); outline-offset: 2px; }
+.kid-btn.kid-pop { border: 2px solid var(--ink); box-shadow: 0 3px 0 0 var(--ink); }
+.kid-btn.kid-pop:not(:disabled, [aria-disabled="true"]):hover { transform: translateY(-1px); box-shadow: 0 4px 0 0 var(--ink); }
+.kid-btn.kid-pop:not(:disabled, [aria-disabled="true"]):active { transform: translateY(3px); box-shadow: 0 0 0 0 var(--ink); }
+
+.kid-card { border-radius: 1.25rem; border: 2px solid var(--ink); box-shadow: 0 5px 0 0 var(--ink); }
+.kid-card > *, .kid-sheet > * { border-width: 0; }
+
+.kid-field { border-radius: 0.75rem; background: var(--ui-bg); box-shadow: inset 0 0 0 2px var(--ink); }
+.kid-field:focus, .kid-field:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--ui-primary), 0 0 0 4px color-mix(in srgb, var(--ui-primary) 28%, transparent);
+}
+.kid-field[aria-invalid="true"] { box-shadow: inset 0 0 0 2px var(--ui-error); }
+.kid-pin { width: 2.75rem; height: 3.25rem; padding: 0; font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; }
+
+.kid-check { border-radius: 0.375rem; box-shadow: inset 0 0 0 2px var(--ink); }
+.kid-alert { border-radius: 1rem; border: 2px solid currentColor; box-shadow: none; }
+.kid-badge { border-radius: 9999px; padding-inline: 0.65em; font-family: var(--font-display); font-weight: 600; }
+.kid-sheet { border-radius: 1.5rem; border: 2px solid var(--ink); box-shadow: 0 6px 0 0 var(--ink); }
+.kid-menu, .kid-toast { border-radius: 1rem; border: 2px solid var(--ink); box-shadow: 0 4px 0 0 var(--ink); }
+.kid-tip { border-radius: 9999px; border: 2px solid var(--ink); box-shadow: none; font-family: var(--font-display); height: auto; }
+
+/* Pages pop in when the route changes. */
+.page-enter-active { animation: pop-in 0.3s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
+.page-leave-active { transition: opacity 0.1s ease; }
+.page-leave-to { opacity: 0; }
+
+/* Confetti (ui/app/composables/useConfetti.ts). */
+.confetti { position: fixed; inset: 0; z-index: 200; overflow: hidden; pointer-events: none; }
+.confetti i {
+  position: absolute;
+  top: 0;
+  left: var(--x);
+  width: var(--size);
+  height: calc(var(--size) * 0.55);
+  border-radius: 3px;
+  background: var(--color);
+  opacity: 0;
+  animation: confetti-fall var(--time) cubic-bezier(0.25, 0.5, 0.5, 1) var(--delay) forwards;
+}
+.confetti i:nth-child(3n) { height: var(--size); border-radius: 9999px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}

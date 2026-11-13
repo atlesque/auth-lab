@@ -1,0 +1,5 @@
+BETTER_AUTH_SECRET=
+# Optional, turns on GitHub sign-in:
+# GITHUB_CLIENT_ID=
+# GITHUB_CLIENT_SECRET=
+# On a local run (`--env dev`) SIGNUP_ALLOW and ADMIN_EMAILS come from wrangler.jsonc; in production they are Worker secrets.
